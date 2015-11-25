@@ -1,0 +1,28 @@
+/*
+    analyze the sequence of execution of the event_loop
+ */
+var fs = require('fs');
+//IO
+fs.readdir(process.cwd(), function(err, something){
+    console.log("From IO");
+    process.nextTick(function(){
+       console.log('I want to call this immediately after IO and before setImmediate');
+    });
+});
+//timers
+setTimeout(function(){
+    console.log("Timeout 1000");
+}, 1000);
+setTimeout(function(){
+   console.log("Timeout 0");
+},0);
+//Immediate
+setImmediate(function(){
+   console.log('Called immediately after IO phase');
+});
+//Main program
+console.log('From main');
+//next tick after main
+process.nextTick(function(){
+    console.log('next tick after main program');
+});
